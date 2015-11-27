@@ -1,27 +1,32 @@
 import java.rmi.RemoteException;
 import java.util.List;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.ArrayList;
 
 public class AuctionImpl extends UnicastRemoteObject implements AuctionSystem {
+
+    private List<AuctionItem> list = new ArrayList<AuctionItem>();
 
     public AuctionImpl() throws RemoteException {
         super();
         // Create database object
     }
 
-    public int createAuction(AuctionItem item) throws RemoteException {
-        // TODO Auto-generated method stub
-        return 0;
+    public String createAuction(AuctionItem item) throws RemoteException {
+        list.add(item);
+        return item.toString();
     }
 
     public String bidItem(int id, int sum) throws RemoteException {
         // TODO Auto-generated method stub
-        return "some item";
+        return Integer.toString(list.size());
     }
 
-    public List<AuctionItem> getAllListings() throws RemoteException {
-        // TODO Auto-generated method stub
-        return null;
+    public String getAllListings() throws RemoteException {
+        StringBuffer sb = new StringBuffer();
+        for(AuctionItem ai: list)
+            sb.append(ai.toString());
+        return sb.toString();
     }
 
 }

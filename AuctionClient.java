@@ -3,6 +3,8 @@ import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.util.Scanner;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 
 public class AuctionClient {
 
@@ -28,9 +30,7 @@ public class AuctionClient {
         try {
             System.out.println("Welcome to the auction system. Type \"help\" to see available options.");
 
-            // Create the reference to the remote object through the rmiregistry
             AuctionSystem as = (AuctionSystem)
-            // Naming.lookup("rmi://localhost/CalculatorService");
             Naming.lookup("rmi://" + reg_host + ":" + reg_port + "/CalculatorService");
 
             Scanner sc = new Scanner(System.in);
@@ -48,6 +48,26 @@ public class AuctionClient {
                 command = sc.nextLine();
                 try {
                     if (command.startsWith("create")) {
+                        System.out.print("auction name: ");
+                        String name = sc.nextLine();
+                        System.out.print("minimum value: ");
+                        int minVal = Integer.parseInt(sc.nextLine());
+                        System.out.print("closing year (yyyy): ");
+                        int year = Integer.parseInt(sc.nextLine());
+                        System.out.print("closing month (mm): ");
+                        int month = Integer.parseInt(sc.nextLine()) - 1;
+                        System.out.print("closing day (dd): ");
+                        int day = Integer.parseInt(sc.nextLine());
+                        System.out.print("closing hour (hh): ");
+                        int hour = Integer.parseInt(sc.nextLine());
+                        System.out.print("closing minute (mm): ");
+                        int minute = Integer.parseInt(sc.nextLine());
+                        Calendar c = new GregorianCalendar(year, month, day, hour, minute);
+                        long timestamp = c.getTimeInMillis();
+
+                        System.out.println(Long.toString(timestamp));
+                        String resp = as.createAuction(new AuctionItem(name, minVal, timestamp));
+
                     }
                     else if (command.startsWith("help"))
                     System.out.println(commandList);
@@ -64,12 +84,9 @@ public class AuctionClient {
                         sc.close();
                         System.exit(0);
                     } else
-                    System.err
-                    .println("No such commands. Type \"help\" for usage.");
-                } catch(Exception e) {}
+                    System.err.println("No such commands. Type \"help\" for usage.");
+                } catch(Exception e) {e.printStackTrace();}
             }
-
-            // Here do what the interface allows
         }
         // Catch the exceptions that may occur - rubbish URL, Remote exception
         // Not bound exception or the arithmetic exception that may occur in
@@ -86,6 +103,8 @@ public class AuctionClient {
             System.out.println();
             System.out.println("NotBoundException");
             System.out.println(nbe);
+        } catch (Exception e) {
+            System.out.println(e);
         }
     }
 }
